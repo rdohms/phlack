@@ -2,12 +2,16 @@
 
 namespace spec\Crummy\Phlack\Bridge\Guzzle;
 
-use Guzzle\Service\Client;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class PhlackClientSpec extends ObjectBehavior
 {
+    function let()
+    {
+        $this->beConstructedWith('', [ 'username' => 'username', 'token' => 'foo' ]);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('Crummy\Phlack\Bridge\Guzzle\PhlackClient');

@@ -8,22 +8,22 @@ use Guzzle\Service\Description\ServiceDescription;
 
 class PhlackClient extends Client
 {
-    public static function factory($config = array())
+    /**
+     * @param string $baseUrl
+     * @param array $config
+     */
+    public function __construct($baseUrl = '', $config = [])
     {
-        $default  = [
-            'base_url'        => PhlackPlugin::BASE_URL,
-            'request.options' => [
-                'exceptions'  => false,
-            ],
-        ];
-        $required = [ 'username', 'token' ];
+        $baseUrl    = empty($baseUrl) ? PhlackPlugin::BASE_URL : $baseUrl;
+        $default    = [ 'request.options' => [ 'exceptions'  => false ] ];
+        $required   = [ 'username', 'token' ];
+        $config     = Collection::fromConfig($config, $default, $required);
 
-        $config = Collection::fromConfig($config, $default, $required);
-        $client = new self($config['base_url'], $config);
+        parent::__construct($baseUrl, $config);
 
-        $client->addSubscriber(new PhlackPlugin($config['username'], $config['token']));
-        $client->setDescription(ServiceDescription::factory(__DIR__.'/Resources/slack.json'));
-
-        return $client;
+        $this
+            ->setDescription(ServiceDescription::factory(__DIR__.'/Resources/slack.json'))
+            ->addSubscriber(new PhlackPlugin($config['username'], $config['token']));
+        ;
     }
 }
